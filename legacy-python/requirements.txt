@@ -1,0 +1,26 @@
+# ============================================
+# DEPENDENCIAS DEL PROYECTO
+# ============================================
+
+# Web Scraping y Automatización
+selenium>=4.15.0
+
+# API de Google Gemini (OCR para captchas)
+google-genai>=0.3.0
+
+# Procesamiento de imágenes
+pillow>=10.0.0
+
+# Base de datos
+pymongo>=4.5.0
+
+# Manipulación de datos
+pandas>=2.0.0
+
+# Windows-specific (opcional, para interacción con Windows)
+pywin32>=305
+
+# ============================================
+# INSTALACIÓN
+# ============================================
+# pip install -r requirements.txt
