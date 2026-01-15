@@ -1,4 +1,9 @@
 import { OpenAPIV3 } from 'openapi-types';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const PORT = process.env.PORT || '3000';
+const HOST = process.env.HOST || 'localhost';
 
 const swaggerSpec: OpenAPIV3.Document = {
   openapi: '3.0.0',
@@ -8,7 +13,7 @@ const swaggerSpec: OpenAPIV3.Document = {
     description: 'Documentación de la API para gestión de empresas, usuarios y licitaciones.'
   },
   servers: [
-    { url: '/api', description: 'API local' }
+    { url: `http://${HOST}:${PORT}/api`, description: 'API local' }
   ],
   components: {
     securitySchemes: {
@@ -18,6 +23,32 @@ const swaggerSpec: OpenAPIV3.Document = {
         bearerFormat: 'JWT',
       },
     },
+    schemas: {
+      Company: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          nit: { type: 'string' },
+          sector: { type: 'string' },
+          email: { type: 'string' },
+          phone: { type: 'string' },
+          address: { type: 'string' },
+          isActive: { type: 'boolean' }
+        }
+      },
+      User: {
+        type: 'object',
+        properties: {
+          companyId: { type: 'string', nullable: true },
+          name: { type: 'string' },
+          email: { type: 'string' },
+          password: { type: 'string' },
+          role: { type: 'string', enum: ['admin', 'user', 'viewer'] },
+          isActive: { type: 'boolean' }
+        },
+        required: ['name', 'email', 'password', 'role', 'isActive']
+      }
+    }
   },
   security: [{ bearerAuth: [] }],
   paths: {
@@ -92,6 +123,50 @@ const swaggerSpec: OpenAPIV3.Document = {
             }
           },
           '401': { description: 'Refresh token inválido' }
+        }
+      }
+    },
+    '/auth/company-token': {
+      post: {
+        tags: ['Auth'],
+        summary: 'Generar token para creación de empresas',
+        description: 'Retorna un JWT especial para permitir la creación de empresas. Expira en 10 minutos.',
+        responses: {
+          '200': {
+            description: 'Token generado',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    token: { type: 'string' }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    '/auth/user-token': {
+      post: {
+        tags: ['Auth'],
+        summary: 'Generar token para creación de usuarios',
+        description: 'Retorna un JWT especial para permitir la creación de usuarios. Expira en 10 minutos.',
+        responses: {
+          '200': {
+            description: 'Token generado',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    token: { type: 'string' }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -242,33 +317,6 @@ const swaggerSpec: OpenAPIV3.Document = {
         responses: {
           '200': { description: 'Usuario eliminado' },
           '404': { description: 'No encontrado' }
-        }
-      }
-    }
-  },
-  components: {
-    schemas: {
-      Company: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          nit: { type: 'string' },
-          sector: { type: 'string' },
-          email: { type: 'string' },
-          phone: { type: 'string' },
-          address: { type: 'string' },
-          isActive: { type: 'boolean' }
-        }
-      },
-      User: {
-        type: 'object',
-        properties: {
-          companyId: { type: 'string' },
-          name: { type: 'string' },
-          email: { type: 'string' },
-          password: { type: 'string' },
-          role: { type: 'string', enum: ['admin', 'user', 'viewer'] },
-          isActive: { type: 'boolean' }
         }
       }
     }
